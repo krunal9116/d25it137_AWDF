@@ -1,0 +1,16 @@
+{
+  "name": "task-manager-api-d25it137",
+  "version": "1.0.0",
+  "description": "Practical 4 - Building a RESTful API with Node.js and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["express", "rest-api", "node"],
+  "author": "D25IT137",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

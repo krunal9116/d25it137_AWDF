@@ -1,0 +1,160 @@
+================================================================================
+AWDF PRACTICAL DEMONSTRATION CHEAT SHEET (ITUE301)
+Student ID: D25IT137 | Department of IT, CHARUSAT
+Project: Full-Stack Task Manager (React 18 + Express + MongoDB + AI Integration)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. QUICK STARTUP COMMANDS & URLS
+--------------------------------------------------------------------------------
+To start MongoDB, Backend (port 5001), and Frontend (port 5173) together,
+open your terminal in the workspace root and run:
+
+    npm start
+    (or: node start-all.js)
+
+URLS & CREDENTIALS:
+- Frontend UI:             http://localhost:5173
+- Backend REST API:        http://localhost:5001
+- Notification Events Log: http://localhost:5001/notifications
+- Demo Login Email:        demo@faculty.com
+- Demo Login Password:     password123
+
+To run automated test suite (Jest & Supertest):
+    npm test --prefix p13/backend
+
+
+--------------------------------------------------------------------------------
+2. STEP-BY-STEP LIVE DEMO SCRIPT FOR FACULTY (CLICK-BY-CLICK)
+--------------------------------------------------------------------------------
+
+STEP 1: OPEN BROWSER & DEVTOOLS
+1. Open Google Chrome and go to: http://localhost:5173
+2. Press F12 (or Right-Click -> Inspect) and select the "Network" tab.
+3. Filter by "Fetch/XHR" so faculty can see every API request in real-time.
+
+STEP 2: DEMONSTRATE AUTHENTICATION & JWT (PRACTICAL 10)
+1. Go to Login page. Enter: demo@faculty.com / password123
+2. Click "Login".
+3. Show the faculty the POST /login request in the Network tab:
+   - Request body sends credentials.
+   - Response returns the signed JWT token.
+   - Explain: "The token is stored in localStorage and attached as a Bearer
+     token in the Authorization header for all subsequent protected API calls."
+
+STEP 3: DEMONSTRATE CRUD & IN-MEMORY CACHE (PRACTICALS 5, 6, 7 & 9)
+1. Go to "Tasks". Show pre-seeded tasks with High/Medium/Low priority tags.
+2. In Network tab, show GET /tasks.
+3. Explain: "Our backend uses NodeCache with a 60-second Time-To-Live (TTL).
+   When tasks are fetched repeatedly, they are served from memory. When a task
+   is created, updated, or deleted, the cache is automatically invalidated."
+
+STEP 4: DEMONSTRATE "✨ AI SUGGEST" FEATURE (PRACTICAL 13)
+1. In the Task Title input field, type:
+   "Fix JWT authentication bug"  OR  "Deploy containerized app with Docker"
+2. Click the "✨ AI Suggest" button.
+3. Show the faculty:
+   - Network Tab: A POST request to /api/ai/generate-description is sent
+     to OUR backend (NOT directly to OpenAI/Gemini).
+   - UI Update: The Description and Priority ('high') fill automatically.
+   - Responsible AI Disclaimer: A banner appears:
+     "✨ AI-generated suggestion. Please review and edit before saving."
+   - Human-in-the-Loop: Show that the description is an editable textarea.
+     The user has full control to edit before saving to the database.
+   - Rate-Limiting Cooldown: The button displays a 30-second countdown timer.
+
+STEP 5: EXPLAIN GRACEFUL DEGRADATION (KEY MARKING POINT!)
+Say to faculty:
+"Because external AI APIs can fail due to network outages, rate limits (HTTP 429),
+or missing API keys, our backend implements Graceful Degradation.
+If OpenAI or Gemini fails or is unconfigured, our local heuristic fallback engine
+analyzes keywords in the title (like 'bug', 'docker', 'auth', 'database') and
+generates a contextual description and priority without crashing the application."
+
+STEP 6: DEMONSTRATE EVENT-DRIVEN NOTIFICATIONS (PRACTICAL 10)
+1. Open a new browser tab to: http://localhost:5001/notifications
+2. Show the JSON array of events ('task-created', 'task-updated', 'task-deleted').
+3. Explain: "Node's EventEmitter handles background logs asynchronously,
+   allowing the API to send a 201 Created response immediately without lag."
+
+STEP 7: RUN AUTOMATED TESTS (PRACTICALS 12 & 13)
+In terminal run:
+    npm test --prefix p13/backend
+Show that all 6 test suites pass (CRUD, AI Suggest, Graceful Fallback, Rate Limit).
+
+
+--------------------------------------------------------------------------------
+3. EXACT CODE FILES & LINE NUMBERS TO SHOW FACULTY
+--------------------------------------------------------------------------------
+
+1. Frontend API Client Layer:
+   File: p13/frontend/src/api.js (Lines 1 to 54)
+   - BASE_URL configuration.
+   - getHeaders() injecting 'Authorization: Bearer <token>'.
+   - generateAIDescription(title) calling /api/ai/generate-description.
+
+2. Frontend AI UI & Human-in-the-Loop:
+   File: p13/frontend/src/components/Tasks.jsx (Lines 76 to 125)
+   - handleAIGenerate() function.
+   - 30-second client-side cooldown debounce timer.
+   - Responsible AI disclaimer rendering.
+
+3. Backend AI Endpoint & Rate Limiter:
+   File: p13/backend/server.js (Lines 135 to 180)
+   - aiRateLimiter middleware: limits requests to max 10/min/IP.
+   - POST /api/ai/generate-description route handler.
+
+4. Backend AI Service & Graceful Degradation Engine:
+   File: p13/backend/services/aiService.js (Lines 8 to 120)
+   - generateFallbackDetails(): keyword heuristic fallback engine.
+   - generateTaskDescription(): multi-provider support (OpenAI gpt-4o-mini,
+     Gemini 1.5 Flash, and fallback trigger).
+
+5. Authentication & JWT Handlers:
+   File: p13/backend/server.js (Lines 58 to 105)
+   - POST /register with bcryptjs password hashing.
+   - POST /login with jwt.sign() and expiration.
+
+6. Docker Orchestration:
+   File: p13/docker-compose.yml (Lines 1 to 59)
+   - Multi-container orchestration: frontend, backend, mongodb 6.0.
+   - Named volume 'mongo-data' mounted to /data/db for persistence.
+
+
+--------------------------------------------------------------------------------
+4. TOP VIVA QUESTIONS & DIRECT ANSWERS
+--------------------------------------------------------------------------------
+
+Q1: Why must the AI API be called from the backend instead of directly from React?
+A1: Security & Key Isolation. Any JavaScript running in a web browser can be
+    inspected by users via DevTools Sources and Network tabs. Putting API keys
+    in React exposes them to theft and financial abuse. Routing through Express
+    keeps the key secure in server environment variables (process.env.OPENAI_API_KEY)
+    and allows the server to sanitize requests and enforce rate limits.
+
+Q2: What is "Graceful Degradation"?
+A2: It is an architectural resilience pattern where an application continues to
+    operate smoothly with fallback functionality when an external dependency
+    fails, rather than throwing fatal error screens. In our project, if OpenAI
+    or Gemini times out or quota is exhausted, our local fallback engine
+    generates relevant suggestions so the user can still create tasks uninterrupted.
+
+Q3: How do you enforce Responsible AI governance in your application?
+A3: 1) Human-in-the-loop: Suggestions are placed in editable fields, never auto-saved.
+    2) Transparency: A prominent disclaimer banner alerts users to review AI output.
+    3) Data Privacy: Only task titles are sent; no passwords, tokens, or PII.
+    4) Resource Protection: Dual-layer rate limiting (server IP tracking + client cooldown).
+
+Q4: What is the benefit of Docker Compose and named volumes?
+A4: Docker Compose runs all interdependent services (frontend, backend, database)
+    together on a private bridge network with automatic service discovery DNS.
+    The named volume (mongo-data) guarantees that database records survive even
+    when containers are stopped, removed, or rebuilt.
+
+Q5: Why use an EventEmitter for notifications instead of synchronous code?
+A5: To decouple secondary side-effects (like logging, notifications, or email)
+    from the main HTTP request-response cycle. The API responds to the user
+    immediately (e.g., 201 Created), and the listener processes events in the
+    background without adding latency.
+================================================================================
+

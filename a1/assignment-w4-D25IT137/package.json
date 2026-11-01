@@ -1,0 +1,16 @@
+{
+  "name": "assignment-w4-d25it137",
+  "version": "1.0.0",
+  "description": "Week 4 Assignment 1 - Richardson Maturity Model Evaluation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_runner.js"
+  },
+  "keywords": ["rmm", "rest-api", "hateoas", "express"],
+  "author": "D25IT137",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

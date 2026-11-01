@@ -1,0 +1,160 @@
+================================================================================
+ITUE301: AWDF FINAL PRACTICAL 13 PROJECT DEMONSTRATION SCRIPT
+Project: Full-Stack Task Manager with Generative AI Service Integration
+Student: Krunal Vaghamshi | Student ID: D25IT137 | Batch: 5IT-2(C2)
+Video Target Duration: ~3.5 to 5 minutes
+================================================================================
+
+--- PRE-RECORDING CHECKLIST (Setup in 1 minute before hitting Record) ---
+1. Terminal: Make sure the project is running:
+   npm start
+2. Chrome Browser: Open two tabs:
+   - Tab 1: http://localhost:5173
+   - Tab 2: http://localhost:5001/notifications
+3. VS Code: Have the project workspace open.
+4. Press [Cmd + Shift + 5], select Built-in Microphone under Options, and click Record.
+
+
+================================================================================
+SCENE 1: INTRODUCTION & PROJECT ARCHITECTURE (20 seconds)
+================================================================================
+[ON SCREEN]: Browser showing the Task Manager home/dashboard at http://localhost:5173
+
+[SPEAK ALOUD]:
+"Hello faculty, my name is Krunal Vaghamshi, Student ID: D25IT137, 5th Semester IT, 
+Batch 5IT-2(C2). In this video, I am demonstrating my final Practical 13 project 
+for ITUE301 Advanced Web Development Frameworks: A complete Full-Stack Task 
+Management Web Application featuring secure authentication, in-memory caching, 
+asynchronous event-driven logging, Docker containerization, GitHub Actions CI/CD, 
+and External Generative AI Integration with Graceful Degradation."
+
+
+================================================================================
+SCENE 2: USER AUTHENTICATION & JWT SECURITY (40 seconds)
+================================================================================
+[ON SCREEN]:
+1. Click "Login" in the navigation bar.
+2. Press F12 to open Developer Tools -> go to "Network" tab (filtered by Fetch/XHR).
+3. Enter credentials:
+   - Email: demo@faculty.com
+   - Password: password123
+4. Click "Login".
+5. In Network tab, click on the POST /login request to show:
+   - Request payload
+   - Response containing the signed JSON Web Token (JWT).
+   - Show how the token is attached as 'Authorization: Bearer <token>' on subsequent requests.
+
+[SPEAK ALOUD]:
+"First, we demonstrate secure authentication. Passwords are encrypted on the 
+server using bcryptjs. When the user logs in, the backend signs a JSON Web Token 
+with an expiration time. This token is stored in localStorage and passed in the 
+Authorization Bearer header to protect all task management endpoints."
+
+
+================================================================================
+SCENE 3: TASK CRUD & IN-MEMORY QUERY CACHING (40 seconds)
+================================================================================
+[ON SCREEN]:
+1. Navigate to the "Tasks" dashboard (http://localhost:5173/tasks).
+2. Point out pre-seeded tasks with High, Medium, and Low priorities.
+3. In the Network tab, show the GET /tasks request.
+4. Mark a task completed or delete one, showing real-time UI updates.
+
+[SPEAK ALOUD]:
+"Here is the Task Management dashboard. Users can perform full CRUD operations: 
+creating tasks, toggling completion, updating details, and deleting records. 
+To optimize performance, our Express backend incorporates in-memory caching using 
+NodeCache with a 60-second TTL. Read requests for all tasks are served instantly 
+from cache, and any write operation like creating or deleting automatically 
+invalidates the cache to prevent stale data."
+
+
+================================================================================
+SCENE 4: ASYNCHRONOUS EVENT-DRIVEN LOGGING (30 seconds)
+================================================================================
+[ON SCREEN]:
+1. Switch to Chrome Tab 2: http://localhost:5001/notifications
+2. Refresh to show the JSON array of logged background events.
+3. Highlight events like 'task-created' or 'task-deleted' with timestamps.
+
+[SPEAK ALOUD]:
+"Next is our Event-Driven Architecture. Using Node.js's built-in EventEmitter, 
+when a user creates or modifies a task, the API responds with a 201 Created 
+immediately, while an event is dispatched in the background to log notification 
+details without blocking client latency. We can verify these background logs 
+live right here on the notifications endpoint."
+
+
+================================================================================
+SCENE 5: GENERATIVE AI INTEGRATION & GRACEFUL DEGRADATION (1 minute) ⭐ CRUCIAL!
+================================================================================
+[ON SCREEN]:
+1. Switch back to Tasks tab: http://localhost:5173/tasks
+2. In the "Task Title" input box, type:
+   Fix JWT token expiration and security vulnerability
+3. Click the "✨ AI Suggest" button.
+4. Show what happens live:
+   - Loading state appears.
+   - The Description textarea automatically populates with a structured suggestion.
+   - The suggested Priority automatically switches to 'high'.
+   - The blue disclaimer banner displays:
+     "✨ AI-generated suggestion. Please review and edit before saving."
+   - Click inside the Description textarea and type a small edit (e.g., 'Verified').
+   - Point to the 30-second cooldown timer countdown on the button.
+5. Click "Add Task" to save the new task to MongoDB.
+
+[SPEAK ALOUD]:
+"Now for the core highlight of Practical 13: External AI Service Integration.
+When I click 'AI Suggest', our backend AI gateway invokes generative models like 
+OpenAI or Google Gemini. 
+
+Notice four key engineering and Responsible AI implementations:
+First, Key Isolation: The AI API keys reside solely in the backend .env, never 
+exposed to browser inspect tools.
+Second, Graceful Degradation: If external AI services encounter rate limits, 
+outages, or unconfigured keys, our local heuristic fallback engine immediately 
+generates contextual descriptions so the user workflow is never interrupted.
+Third, Human-in-the-Loop: The suggestion is populated into an editable textarea, 
+allowing the user to inspect and edit before committing to the database.
+And fourth, Rate Limiting: A 30-second client cooldown and a 10 request-per-minute 
+server limit prevent quota exhaustion."
+
+
+================================================================================
+SCENE 6: DOCKER CONTAINERIZATION & GITHUB ACTIONS CI/CD (40 seconds)
+================================================================================
+[ON SCREEN]:
+1. Switch to VS Code editor:
+   - Open p13/docker-compose.yml: Show mongodb, backend, and frontend services.
+     Point out named volume 'mongo-data' for persistence and bridge network.
+   - Open .github/workflows/ci.yml: Show the automated pipeline definition.
+
+[SPEAK ALOUD]:
+"Looking at DevOps architecture in our code:
+In docker-compose.yml, our entire three-tier architecture—React frontend, 
+Express backend, and MongoDB 6.0—is containerized and networked together, with 
+a persistent named volume ensuring database state survives restarts.
+In .github/workflows/ci.yml, we configured a GitHub Actions CI/CD pipeline 
+that triggers on every push and pull request to install dependencies, run 
+ESLint code linting, and execute automated regression tests."
+
+
+================================================================================
+SCENE 7: AUTOMATED TESTS & CONCLUSION (25 seconds)
+================================================================================
+[ON SCREEN]:
+1. Switch to the Terminal window.
+2. Run:
+   npm test --prefix p13/backend
+3. Show all 6 test suites passing in green (covering CRUD, AI suggestion, 
+   fallback degradation, validation, and rate limiting).
+
+[SPEAK ALOUD]:
+"Finally, we run our automated test suite built with Jest and Supertest. 
+As you can see, all 6 test suites pass cleanly, verifying our API security, 
+rate limiting, AI endpoints, and graceful degradation fallback. 
+This completes the demonstration of our Practical 13 Full-Stack Application. 
+Thank you!"
+
+[STOP RECORDING]
+================================================================================
