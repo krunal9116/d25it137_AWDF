@@ -14,7 +14,7 @@
 
 ## 📑 Consolidated Practical Manual & Index
 * 📄 **Official Consolidated Manual (70 Pages):** [`D25IT137_AWDF_Practical-Manual.pdf`](./D25IT137_AWDF_Practical-Manual.pdf)
-* 📄 **Official Index Page:** [`INDEX_PAGE.docx`](./INDEX_PAGE.docx)
+
 
 ---
 
